@@ -86,6 +86,7 @@ class Prediction:
         p,
     ):
         self.inputs = inputs
+        self.tokenizer = self.inputs.tokenizer
         self.loss_fct = loss_fct
         self.logits = PredTokenScores(self, logits)
         self.loss = PredSequenceScores(self, loss)
@@ -180,6 +181,7 @@ class Prediction:
         fig, axs = plt.subplots(
             token_scores.shape[0] * token_scores.shape[1], figsize=(10, 2 * token_scores.shape[0] * token_scores.shape[1])
         )
+        props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
 
         for batch_i in range(token_scores.shape[0]):
             for token_i in range(token_scores.shape[1]):
@@ -189,27 +191,17 @@ class Prediction:
                 ax.bar(bin_edges[:-1], hist, width=bin_edges[:-1] - bin_edges[1:])
                 ax.set_yscale('log')
 
+                topk_tokens = []
                 if topk:
-                    # show topk values
-                    # old_v = None
-                    # len_old_v = None
-                    # y = 2.5
                     vals, inds = token_scores[batch_i, token_i].topk(topk)
-                    for v, tkn in zip(vals, tokenizer.batch_decode(inds)):
-                        '''
-                        if old_v is not None and (abs(old_v) - abs(v))/abs(vals.max()) < 0.025:
-                            y *= 5 * len_old_v
-                        else:
-                            y = 2.5
-                        '''
-                        ax.text(v, 2.5, tkn,
-                            ha="center", va="bottom", rotation=90,
-                            backgroundcolor=(1.0, 0.0, 0.0, 0.3), fontweight='bold'
-                        )
-                        # len_old_v = len(tkn)
-                        # old_v = v
+                    topk_tokens = self.tokenizer.batch_decode(inds)
 
                 # show input sequence so far
-                text = self.inputs.tokenizer.decode(self.inputs.input_ids[batch_i,:token_i])
-                label_x = token_scores[batch_i, token_i].max()
-                ax.text(label_x, hist.max() / 100, text)
+                text_so_far = self.tokenizer.decode(self.inputs.input_ids[batch_i,:token_i])
+
+                ax.text(
+                    1.1, 0.95,
+                    f'>>{text_so_far}\n' + '\n'.join(['- ' + repr(tk) for tk in topk_tokens]),
+                    transform=ax.transAxes, fontsize=14, verticalalignment='top',
+                    bbox=props
+                )
