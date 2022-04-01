@@ -35,8 +35,34 @@ class Pred(torch.Tensor):
     def __init__(self, pred, x):
         self.pred = pred
 
-    def __getitem__(self, val):
-        return self.__class__(self.pred, super().__getitem__(val))
+    def __neg__(self, *args, **kwargs):
+        return self.__class__(self.pred, super().__neg__(*args, **kwargs))
+    def __add__(self, *args, **kwargs):
+        return self.__class__(self.pred, super().__add__(*args, **kwargs))
+    def __sub__(self, *args, **kwargs):
+        return self.__class__(self.pred, super().__sub__(*args, **kwargs))
+    def __rsub__(self, *args, **kwargs):
+        return self.__class__(self.pred, super().__rsub__(*args, **kwargs))
+    def __rdiv__(self, *args, **kwargs):
+        return self.__class__(self.pred, super().__rdiv__(*args, **kwargs))
+    def __rmod__(self, *args, **kwargs):
+        return self.__class__(self.pred, super().__rmod__(*args, **kwargs))
+    def __ipow__(self, *args, **kwargs):
+        return self.__class__(self.pred, super().__ipow__(*args, **kwargs))
+    def __rpow__(self, *args, **kwargs):
+        return self.__class__(self.pred, super().__rpow__(*args, **kwargs))
+    def __floordiv__(self, *args, **kwargs):
+        return self.__class__(self.pred, super().__floordiv__(*args, **kwargs))
+    def __rfloordiv__(self, *args, **kwargs):
+        return self.__class__(self.pred, super().__rfloordiv__(*args, **kwargs))
+    def __rlshift__(self, *args, **kwargs):
+        return self.__class__(self.pred, super().__rlshift__(*args, **kwargs))
+    def __rrshift__(self, *args, **kwargs):
+        return self.__class__(self.pred, super().__rrshift__(*args, **kwargs))
+    def __rmatmul__(self, *args, **kwargs):
+        return self.__class__(self.pred, super().__rmatmul__(*args, **kwargs))
+    def __getitem__(self, *args, **kwargs):
+        return self.__class__(self.pred, super().__getitem__(*args, **kwargs))
 
 
 class PredSequenceScores(Pred):
